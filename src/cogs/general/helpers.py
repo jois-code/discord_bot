@@ -338,10 +338,9 @@ class GeneralHelpers:
 
         prn = profile.prn
         branch_full = profile.branch
-        campus_short = profile.campus
         campus_code = profile.campus_code
         # `_fetch_link_profile` already validated these; re-check so `-O` cannot strip safety.
-        if prn is None or branch_full is None or campus_short is None or campus_code is None:
+        if prn is None or branch_full is None or campus_code is None:
             return LinkMessage.MISSING_PROFILE_FIELDS, None
         year = prn[4:8]
 
@@ -355,11 +354,30 @@ class GeneralHelpers:
                     {"name": "User ID", "value": str(member.id), "inline": True},
                     {"name": "PRN", "value": prn, "inline": True},
                     {"name": "Branch", "value": branch_full, "inline": True},
-                    {"name": "Campus", "value": campus_short, "inline": True},
+                    {"name": "Campus", "value": str(campus_code), "inline": True},
                     {"name": "Year", "value": year, "inline": True},
                 ],
             )
             return LinkMessage.UNRECOGNIZED_BRANCH, None
+
+        campus_short = self._resolve_campus_short(campus_code)
+        if not campus_short:
+            self._send_link_error_log(
+                content=member.mention,
+                title="Campus mapping not found",
+                fields=[
+                    {"name": "Username", "value": member.name, "inline": True},
+                    {"name": "User ID", "value": str(member.id), "inline": True},
+                    {"name": "PRN", "value": prn, "inline": True},
+                    {"name": "Branch", "value": branch_full, "inline": True},
+                    {"name": "Campus", "value": str(campus_code), "inline": True},
+                    {"name": "Year", "value": year, "inline": True},
+                ],
+            )
+            return (
+                "Unable to map your campus to a recognized short code. Please try again or contact a moderator.",
+                None,
+            )
 
         try:
             academic_roles = [
@@ -551,6 +569,10 @@ class GeneralHelpers:
         except ValueError:
             return None
         return branch_full
+
+    def _resolve_campus_short(self, campus_code: int) -> str | None:
+        """Map PESU campus code (1: RR, 2: EC) to guild role short name."""
+        return Config.CAMPUS_SHORT_CODES.get(campus_code)
 
     async def _authenticate_pesu(self, username: str, password: str) -> PesuAuthResponse:
         """POST to pesu-auth and return a successful auth response.

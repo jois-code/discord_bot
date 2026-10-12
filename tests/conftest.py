@@ -137,6 +137,7 @@ def fake_config(functional_roles: dict[str, MagicMock]) -> MagicMock:
     config.db_name = "pesu_v2_test"
     config.guild_object = discord.Object(id=Config.GUILD_ID)
     config.BRANCH_SHORT_CODES = Config.BRANCH_SHORT_CODES
+    config.CAMPUS_SHORT_CODES = Config.CAMPUS_SHORT_CODES
     config.ACADEMIC_ROLE_COLOR = Config.ACADEMIC_ROLE_COLOR
 
     config.admin_role = functional_roles["ADMIN"]

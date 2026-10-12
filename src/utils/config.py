@@ -96,9 +96,14 @@ class Config:
         "Bachelor of Design": "B.DES",
         "Bachelor of Medicine Bachelor of Surgery": "MBBS",
     }
+    # PESU campus code -> Guild role short name.
+    CAMPUS_SHORT_CODES = {
+        1: "RR",
+        2: "EC",
+    }
 
     # PESU Academy auth service (used by /link).
-    PESU_AUTH_URL = "https://pesu-auth.onrender.com/authenticate"
+    PESU_AUTH_URL = "https://pesuauth.onrender.com/authenticate"
 
     # AskPESU API (used by /ask).
     ASKPESU_API = "https://pesu-dev-askpesu.hf.space/ask"
