@@ -360,7 +360,7 @@ class GeneralHelpers:
             )
             return LinkMessage.UNRECOGNIZED_BRANCH, None
 
-        campus_short = self._resolve_campus_short(campus_code)
+        campus_short = {1: "RR", 2: "EC"}.get(campus_code)
         if not campus_short:
             self._send_link_error_log(
                 content=member.mention,
@@ -569,10 +569,6 @@ class GeneralHelpers:
         except ValueError:
             return None
         return branch_full
-
-    def _resolve_campus_short(self, campus_code: int) -> str | None:
-        """Map PESU campus code (1: RR, 2: EC) to guild role short name."""
-        return Config.CAMPUS_SHORT_CODES.get(campus_code)
 
     async def _authenticate_pesu(self, username: str, password: str) -> PesuAuthResponse:
         """POST to pesu-auth and return a successful auth response.
